@@ -1,3 +1,35 @@
+// ── Theme toggle ──
+
+const themeToggle = document.getElementById('themeToggle');
+
+function getEffectiveTheme() {
+  const stored = localStorage.getItem('theme');
+  if (stored === 'light' || stored === 'dark') return stored;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  themeToggle.textContent = theme === 'dark' ? '\u2600\ufe0f' : '\ud83c\udf19';
+}
+
+applyTheme(getEffectiveTheme());
+
+themeToggle.addEventListener('click', () => {
+  const next = getEffectiveTheme() === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('theme', next);
+  applyTheme(next);
+});
+
+// Keep in sync if system preference changes and no manual override
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+  if (!localStorage.getItem('theme')) {
+    applyTheme(getEffectiveTheme());
+  }
+});
+
+// ── File handling ──
+
 const fileInput = document.getElementById('fileInput');
 const folderInput = document.getElementById('folderInput');
 const btnFiles = document.getElementById('btnFiles');
